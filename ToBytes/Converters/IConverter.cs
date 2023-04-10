@@ -2,5 +2,6 @@
 {
     public interface IConverter
     {
+        public int Version { get; }
     }
 }

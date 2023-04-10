@@ -11,10 +11,11 @@ namespace ToBytes.Converters
 {
     internal class ListStructConverter : IStructConverter
     {
+        public int Version => 1;
         public int Size => 0;
         public ValueType Type => ValueType.ArrayOfStruct;
 
-        public byte[] ToBytes(object obj)
+        public byte[] ToBytes(object obj, byte[] prefix)
         {
             IList? list = (IList)obj;
             Type? elType = list.GetType().GetElementType();

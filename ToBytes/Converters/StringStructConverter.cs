@@ -4,10 +4,11 @@ namespace ToBytes.Converters
 {
     internal class StringStructConverter : IStructConverter
     {
+        public int Version => 1;
         public int Size => 0;
         public ValueType Type => ValueType.String;
 
-        public byte[] ToBytes(object obj)
+        public byte[] ToBytes(object obj, byte[] prefix)
         {
             byte[]? bts = ((string)obj).ToBytesUnsafe();
             return bts;

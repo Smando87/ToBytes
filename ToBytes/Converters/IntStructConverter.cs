@@ -4,10 +4,11 @@ namespace ToBytes.Converters
 {
     internal class IntStructConverter : IStructConverter
     {
+        public int Version => 1;
         public int Size => 4;
         public ValueType Type => ValueType.Struct;
 
-        public byte[] ToBytes(object obj)
+        public byte[] ToBytes(object obj, byte[] prefix)
         {
             byte[]? bts = ConvertExtensions.ToBytes((int)obj);
             return bts;

@@ -11,6 +11,7 @@ namespace ToBytes
 {
     public class ByteDeserializer
     {
+        public int Version => 1;
         private static object BytesToArrayOfStruct(byte[] bytes, Type type)
         {
             IStructConverter? conv = CacherSingleton.Instance.GetConverter(typeof(Array));

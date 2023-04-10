@@ -81,7 +81,7 @@ namespace ToBytes.Converters
                 }
             };
 
-            byte[]? bytes = arrayConverter.ToBytes(array);
+            byte[]? bytes = arrayConverter.ToBytes(array, null);
 
             (var obj, int len) = arrayConverter.FromBytes(bytes, typeof(int));
             int[,]? converted = (int[,])obj;
@@ -100,7 +100,7 @@ namespace ToBytes.Converters
                 1, 2, 3, 4, 5
             };
 
-            byte[]? bytes = arrayConverter.ToBytes(array);
+            byte[]? bytes = arrayConverter.ToBytes(array, null);
 
             (var obj, int len) = arrayConverter.FromBytes(bytes, typeof(int));
             int[]? converted = (int[])obj;
@@ -134,7 +134,7 @@ namespace ToBytes.Converters
                 }
             };
 
-            byte[]? bytes = arrayConverter.ToBytes(array);
+            byte[]? bytes = arrayConverter.ToBytes(array, null);
 
             (var obj, int len) = arrayConverter.FromBytes(bytes, typeof(int));
             int[,,,]? converted = (int[,,,])obj;
@@ -279,7 +279,7 @@ namespace ToBytes.Converters
                 }
             };
 
-            byte[]? bytes = arrayConverter.ToBytes(array.ToArray());
+            byte[]? bytes = arrayConverter.ToBytes(array.ToArray(), null);
 
             (var obj, int len) = arrayConverter.FromBytes(bytes, typeof(int));
             List<int[]>? converted = (List<int[]>)obj;
@@ -337,7 +337,7 @@ namespace ToBytes.Converters
                 5
             };
 
-            byte[]? bytes = arrayConverter.ToBytes(array.ToArray());
+            byte[]? bytes = arrayConverter.ToBytes(array.ToArray(), null);
 
             (var obj, int len) = arrayConverter.FromBytes(bytes, typeof(int));
             List<int>? converted = (List<int>)obj;
@@ -358,7 +358,7 @@ namespace ToBytes.Converters
                 5
             };
 
-            byte[]? bytes = arrayConverter.ToBytes(array.ToArray());
+            byte[]? bytes = arrayConverter.ToBytes(array.ToArray(), null);
 
             (var obj, int len) = arrayConverter.FromBytes(bytes, typeof(double));
             List<double>? converted = (List<double>)obj;
@@ -379,7 +379,7 @@ namespace ToBytes.Converters
                 5
             };
 
-            byte[]? bytes = arrayConverter.ToBytes(array.ToArray());
+            byte[]? bytes = arrayConverter.ToBytes(array.ToArray(), null);
 
             (var obj, int len) = arrayConverter.FromBytes(bytes, typeof(int));
             List<int>? converted = (List<int>)obj;

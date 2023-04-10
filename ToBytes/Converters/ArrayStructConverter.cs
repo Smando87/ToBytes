@@ -9,10 +9,11 @@ namespace ToBytes.Converters
 {
     internal class ArrayStructConverter : IStructConverter
     {
+        public int Version => 1;
         public int Size => 0;
         public ValueType Type => ValueType.ArrayOfStruct;
 
-        public byte[] ToBytes(object obj)
+        public byte[] ToBytes(object obj, byte[] prefix)
         {
             Array array = (Array)obj;
             Type? elType = array.GetType().GetElementType();
@@ -56,5 +57,7 @@ namespace ToBytes.Converters
             Buffer.BlockCopy(bytes, index, res, 0, bytes.Length - index);
             return (res, Size);
         }
+
+       
     }
 }

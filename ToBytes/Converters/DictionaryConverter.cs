@@ -9,6 +9,7 @@ namespace ToBytes.Converters
 {
     public class DictionaryConverter : ISpecialConverter
     {
+        public new int Version => 1;
         public object FromBytes(byte[] bytes, Type keyType, Type valType)
         {
             IStructConverter? convArray = CacherSingleton.Instance.GetConverter(typeof(Array));

@@ -4,10 +4,11 @@ namespace ToBytes.Converters
 {
     internal class DateTimeStructConverter : IStructConverter
     {
+        public int Version => 1;
         public int Size => 8;
         public ValueType Type => ValueType.Struct;
 
-        public byte[] ToBytes(object obj)
+        public byte[] ToBytes(object obj, byte[] prefix)
         {
             byte[]? bts = ConvertExtensions.ToBytes((DateTime)obj);
             return bts;
