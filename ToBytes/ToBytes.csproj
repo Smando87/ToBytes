@@ -5,8 +5,8 @@
         <Version>0.0.1</Version>
         <Authors>Simone Del Prete</Authors>
         <Company>Simone Del Prete</Company>
-        <TargetFrameworks>net5.0;netcoreapp3.1</TargetFrameworks>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <TargetFramework>net7.0</TargetFramework>
     </PropertyGroup>
     <PropertyGroup>
         <ImplicitUsings>enable</ImplicitUsings>
