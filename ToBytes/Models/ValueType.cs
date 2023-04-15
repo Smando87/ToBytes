@@ -12,6 +12,7 @@
         Dictionary,
         Enum,
         ListOfObject,
-        ArrayOfObject
+        ArrayOfObject,
+        CustomStruct
     }
 }

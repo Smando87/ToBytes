@@ -4,7 +4,7 @@ namespace ToBytes
 {
     public static class ToByteExtensions
     {
-        public static T FromBytes<T>(this byte[] bytes)
+        public static T FromBytes<T>(this byte[]? bytes)
         {
             if (bytes == null)
             {
@@ -14,12 +14,12 @@ namespace ToBytes
             return (T)FromBytes(bytes, typeof(T));
         }
 
-        public static object FromBytes(this byte[] bytes, Type type)
+        public static object FromBytes(this byte[]? bytes, Type type)
         {
             return ByteDeserializer.FromBytes(bytes, type);
         }
 
-        public static byte[] ToBytes<T>(this T obj)
+        public static byte[]? ToBytes<T>(this T obj)
         {
             return ByteSerializer.ToBytes(obj);
         }

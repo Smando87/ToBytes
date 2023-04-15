@@ -63,6 +63,40 @@ namespace ToBytes
             }
 
             byte[]? res = new byte[8];
+            var value2 = (long)value;
+            unsafe
+            {
+                Marshal.Copy(new IntPtr(&value2), res, 0, res.Length);
+            }
+
+            return res;
+        }
+        
+        public static byte[] ToBytesUnsafe(this uint? value)
+        {
+            if (!value.HasValue)
+            {
+                return new byte[]
+                {
+                    0, 0, 0, 0
+                };
+            }
+
+            byte[]? res = new byte[4];
+            var value2 = (uint)value;
+            unsafe
+            {
+                Marshal.Copy(new IntPtr(&value2), res, 0, res.Length);
+            }
+
+            return res;
+        }
+        
+        public static byte[] ToBytesUnsafe(this uint value)
+        {
+           
+            byte[]? res = new byte[4];
+            
             unsafe
             {
                 Marshal.Copy(new IntPtr(&value), res, 0, res.Length);
@@ -77,6 +111,26 @@ namespace ToBytes
             unsafe
             {
                 Marshal.Copy(new IntPtr(&value), res, 0, res.Length);
+            }
+
+            return res;
+        }
+        
+        public static byte[] ToBytesUnsafe(this ushort? value)
+        {
+            
+            if (!value.HasValue)
+            {
+                return new byte[]
+                {
+                    0, 0
+                };
+            }
+            byte[]? res = new byte[2];
+            var value2 = (ushort)value;
+            unsafe
+            {
+                Marshal.Copy(new IntPtr(&value2), res, 0, res.Length);
             }
 
             return res;
@@ -134,9 +188,10 @@ namespace ToBytes
             }
 
             byte[]? res = new byte[4];
+            int value2 = (int)value;
             unsafe
             {
-                Marshal.Copy(new IntPtr(&value), res, 0, res.Length);
+                Marshal.Copy(new IntPtr(&value2), res, 0, res.Length);
             }
 
             return res;
@@ -224,9 +279,10 @@ namespace ToBytes
             }
 
             byte[]? res = new byte[4];
+            var value2 = (float)value;
             unsafe
             {
-                Marshal.Copy(new IntPtr(&value), res, 0, res.Length);
+                Marshal.Copy(new IntPtr(&value2), res, 0, res.Length);
             }
 
             return res;
@@ -254,9 +310,10 @@ namespace ToBytes
             }
 
             byte[]? res = new byte[8];
+            double value2 = (double)value;
             unsafe
             {
-                Marshal.Copy(new IntPtr(&value), res, 0, res.Length);
+                Marshal.Copy(new IntPtr(&value2), res, 0, res.Length);
             }
 
             return res;
@@ -284,9 +341,10 @@ namespace ToBytes
             }
 
             byte[]? res = new byte[16];
+            decimal value2 = (decimal)value;
             unsafe
             {
-                Marshal.Copy(new IntPtr(&value), res, 0, res.Length);
+                Marshal.Copy(new IntPtr(&value2), res, 0, res.Length);
             }
 
             return res;
@@ -344,9 +402,10 @@ namespace ToBytes
             }
 
             byte[]? res = new byte[2];
+            char value2 = value.Value;
             unsafe
             {
-                Marshal.Copy(new IntPtr(&value), res, 0, res.Length);
+                Marshal.Copy(new IntPtr(&value2), res, 0, res.Length);
             }
 
             return res;
@@ -486,7 +545,7 @@ namespace ToBytes
             {
                 fixed (void* ptr = bytes)
                 {
-                    res = *(char?*)ptr;
+                    res = *(char*)ptr;
                 }
             }
 
@@ -554,12 +613,12 @@ namespace ToBytes
                 return null;
             }
 
-            decimal? res = 0m;
+            decimal res = 0m;
             unsafe
             {
                 fixed (void* ptr = bytes)
                 {
-                    res = *(decimal?*)ptr;
+                    res = *(decimal*)ptr;
                 }
             }
 
@@ -590,12 +649,12 @@ namespace ToBytes
                 return null;
             }
 
-            double? res = 0d;
+            double res = 0d;
             unsafe
             {
                 fixed (void* ptr = bytes)
                 {
-                    res = *(double?*)ptr;
+                    res = *(double*)ptr;
                 }
             }
 
@@ -626,12 +685,12 @@ namespace ToBytes
                 return null;
             }
 
-            float? res = 0f;
+            float res = 0f;
             unsafe
             {
                 fixed (void* ptr = bytes)
                 {
-                    res = *(float?*)ptr;
+                    res = *(float*)ptr;
                 }
             }
 

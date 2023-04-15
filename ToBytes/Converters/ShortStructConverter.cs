@@ -9,7 +9,7 @@ namespace ToBytes.Converters
         public ValueType Type => ValueType.Struct;
 
 
-        public byte[] ToBytes(object obj, byte[] prefix)
+        public byte[] ToBytes(object obj)
         {
             byte[]? bts = ConvertExtensions.ToBytes((short)obj);
             return bts;

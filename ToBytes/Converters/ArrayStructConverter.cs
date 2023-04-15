@@ -13,16 +13,23 @@ namespace ToBytes.Converters
         public int Size => 0;
         public ValueType Type => ValueType.ArrayOfStruct;
 
-        public byte[] ToBytes(object obj, byte[] prefix)
+        //TODO: sono arrivato qui 20230410 -- prefix
+        public byte[] ToBytes(object obj)
         {
             Array array = (Array)obj;
             Type? elType = array.GetType().GetElementType();
             int elSize = Marshal.SizeOf(elType);
             int dimensions = array.Rank;
-            byte[] bytes = new byte[array.Length * elSize];
+            byte[] bytes = new byte[/*prefixLength +*/ (array.Length * elSize)];
+            /*if (prefix != null)
+            {
+                Buffer.BlockCopy(prefix, 0, bytes, 0, prefixLength);
+            }*/
+
             Buffer.BlockCopy(array, 0, bytes, 0, bytes.Length);
             List<byte> bytesTemp = new();
             byte[]? dimsArray = ConvertExtensions.ToBytes(dimensions);
+           
             bytesTemp.AddRange(dimsArray);
             int[]? indices0 = new int[array.Rank];
             for (int i = 0; i < indices0.Length; i++)
@@ -42,7 +49,9 @@ namespace ToBytes.Converters
 
         public (object, int) FromBytes(byte[] bytes, Type destType)
         {
+
             List<byte>? bytesToRevert = new List<byte>(bytes);
+
             int dimesRev = bytesToRevert.GetRange(0, 4).ToArray().ToInt();
             int index = sizeof(int);
             int[]? indices = new int[dimesRev];

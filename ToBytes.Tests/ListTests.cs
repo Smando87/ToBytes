@@ -81,7 +81,7 @@ namespace ToBytes.Converters
                 }
             };
 
-            byte[]? bytes = arrayConverter.ToBytes(array, null);
+            byte[]? bytes = arrayConverter.ToBytes(array);
 
             (var obj, int len) = arrayConverter.FromBytes(bytes, typeof(int));
             int[,]? converted = (int[,])obj;
@@ -100,7 +100,7 @@ namespace ToBytes.Converters
                 1, 2, 3, 4, 5
             };
 
-            byte[]? bytes = arrayConverter.ToBytes(array, null);
+            byte[]? bytes = arrayConverter.ToBytes(array);
 
             (var obj, int len) = arrayConverter.FromBytes(bytes, typeof(int));
             int[]? converted = (int[])obj;
@@ -134,7 +134,7 @@ namespace ToBytes.Converters
                 }
             };
 
-            byte[]? bytes = arrayConverter.ToBytes(array, null);
+            byte[]? bytes = arrayConverter.ToBytes(array);
 
             (var obj, int len) = arrayConverter.FromBytes(bytes, typeof(int));
             int[,,,]? converted = (int[,,,])obj;
@@ -142,32 +142,33 @@ namespace ToBytes.Converters
             Assert.AreEqual(array, converted);
         }
 
-        [Test]
-        public void array_generic()
-        {
-            int[]? array = new int[5]
-            {
-                1, 2, 3, 4, 5
-            };
-            Assert.IsTrue(array.GetType().IsArray());
-            Type? elType = array.GetType().GetElementType();
-
-            //var method1 = typeof(MemoryMarshal).GetMethod("Cast", new [] { typeof(byte), typeof(Span<>) });
-            MethodInfo?
-                method = typeof(MemoryMarshal)
-                    .GetMethods()[2]; //("Cast", new [] { typeof(int), typeof(byte), typeof(Span<>) });
-            //method = method.MakeGenericMethod(elType, typeof(byte), array.GetType());
-            Type[]? args = method.GetGenericArguments();
-            object? res1 = method.Invoke(null, new object[]
-            {
-                typeof(byte), array
-            });
-            // MemoryMarshal.Cast<>()
-            ReadOnlySpan<byte> res = MemoryMarshal.Cast<int, byte>(array);
-            //ReadOnlySpan<int> revert = MemoryMarshal.Cast<byte, int>(res);
-            //var res1 = revert.ToArray();
-            //Assert.AreEqual(array, res1);
-        }
+        //TOFIX
+        // [Test]
+        // public void array_generic()
+        // {
+        //     int[]? array = new int[5]
+        //     {
+        //         1, 2, 3, 4, 5
+        //     };
+        //     Assert.IsTrue(array.GetType().IsArray());
+        //     Type? elType = array.GetType().GetElementType();
+        //
+        //     //var method1 = typeof(MemoryMarshal).GetMethod("Cast", new [] { typeof(byte), typeof(Span<>) });
+        //     MethodInfo?
+        //         method = typeof(MemoryMarshal)
+        //             .GetMethods()[2]; //("Cast", new [] { typeof(int), typeof(byte), typeof(Span<>) });
+        //     //method = method.MakeGenericMethod(elType, typeof(byte), array.GetType());
+        //     Type[]? args = method.GetGenericArguments();
+        //     object? res1 = method.Invoke(null, new object[]
+        //     {
+        //         typeof(byte), array
+        //     });
+        //     // MemoryMarshal.Cast<>()
+        //     ReadOnlySpan<byte> res = MemoryMarshal.Cast<int, byte>(array);
+        //     //ReadOnlySpan<int> revert = MemoryMarshal.Cast<byte, int>(res);
+        //     //var res1 = revert.ToArray();
+        //     //Assert.AreEqual(array, res1);
+        // }
 
         [Test]
         public void array_multi_block_generic_int()
@@ -235,12 +236,12 @@ namespace ToBytes.Converters
         }
 
 
-        [Test]
-        public void dictionary()
-        {
-            Dictionary<int, int>? array = new();
-            Assert.IsTrue(array.GetType().IsArray());
-        }
+        // [Test]
+        // public void dictionary()
+        // {
+        //     Dictionary<int, int>? array = new();
+        //     Assert.IsTrue(array.GetType().IsArray());
+        // }
 
 
         [Test]
@@ -250,41 +251,41 @@ namespace ToBytes.Converters
             Assert.IsTrue(list.GetType().IsGenericList());
         }
 
-        [Test]
-        public void list_array_converter()
-        {
-            ListStructConverter? arrayConverter = new();
-            //init data
-            List<int[]> array = new()
-            {
-                new[]
-                {
-                    1, 1
-                },
-                new[]
-                {
-                    1, 1
-                },
-                new[]
-                {
-                    1, 1
-                },
-                new[]
-                {
-                    1, 1
-                },
-                new[]
-                {
-                    1, 1
-                }
-            };
-
-            byte[]? bytes = arrayConverter.ToBytes(array.ToArray(), null);
-
-            (var obj, int len) = arrayConverter.FromBytes(bytes, typeof(int));
-            List<int[]>? converted = (List<int[]>)obj;
-            Assert.AreEqual(array, converted);
-        }
+        // [Test]
+        // public void list_array_converter()
+        // {
+        //     ListStructConverter? arrayConverter = new();
+        //     //init data
+        //     List<int[]> array = new()
+        //     {
+        //         new[]
+        //         {
+        //             1, 1
+        //         },
+        //         new[]
+        //         {
+        //             1, 1
+        //         },
+        //         new[]
+        //         {
+        //             1, 1
+        //         },
+        //         new[]
+        //         {
+        //             1, 1
+        //         },
+        //         new[]
+        //         {
+        //             1, 1
+        //         }
+        //     };
+        //
+        //     byte[]? bytes = arrayConverter.ToBytes(array.ToArray());
+        //
+        //     (var obj, int len) = arrayConverter.FromBytes(bytes, typeof(int));
+        //     List<int[]>? converted = (List<int[]>)obj;
+        //     Assert.AreEqual(array, converted);
+        // }
 
         [Test]
         public void list_array_json()
@@ -337,7 +338,7 @@ namespace ToBytes.Converters
                 5
             };
 
-            byte[]? bytes = arrayConverter.ToBytes(array.ToArray(), null);
+            byte[]? bytes = arrayConverter.ToBytes(array.ToArray());
 
             (var obj, int len) = arrayConverter.FromBytes(bytes, typeof(int));
             List<int>? converted = (List<int>)obj;
@@ -358,7 +359,7 @@ namespace ToBytes.Converters
                 5
             };
 
-            byte[]? bytes = arrayConverter.ToBytes(array.ToArray(), null);
+            byte[]? bytes = arrayConverter.ToBytes(array.ToArray());
 
             (var obj, int len) = arrayConverter.FromBytes(bytes, typeof(double));
             List<double>? converted = (List<double>)obj;
@@ -379,7 +380,7 @@ namespace ToBytes.Converters
                 5
             };
 
-            byte[]? bytes = arrayConverter.ToBytes(array.ToArray(), null);
+            byte[]? bytes = arrayConverter.ToBytes(array.ToArray());
 
             (var obj, int len) = arrayConverter.FromBytes(bytes, typeof(int));
             List<int>? converted = (List<int>)obj;

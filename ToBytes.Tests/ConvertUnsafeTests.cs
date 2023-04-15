@@ -271,7 +271,7 @@ namespace ToBytes.Tests
         [Test]
         public void uint_to_bytes_unsafe()
         {
-            int val = 1;
+            uint val = 1;
             byte[]? bytes = val.ToBytesUnsafe();
             Assert.AreEqual(4, bytes.Length);
             uint val2 = bytes.ToUIntUnsafe();

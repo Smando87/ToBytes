@@ -125,7 +125,7 @@ namespace ToBytes.Tests
             {
                 ZDummyObjectC = new DummyObject
                 {
-                    Integer = 1
+                    Integer = 2
                 },
                 Integer = 10,
                 Integer2 = 3,
@@ -185,7 +185,7 @@ namespace ToBytes.Tests
             };
             Console.WriteLine(obj);
             byte[]? bytes = obj.ToBytes();
-            Assert.AreEqual(bytes.Length, 28);
+            Assert.AreEqual(bytes.Length, 30);
             int[]? obj2 = bytes.FromBytes<int[]>();
             Console.WriteLine(obj2);
             Assert.AreEqual(obj, obj2);
@@ -248,13 +248,19 @@ namespace ToBytes.Tests
         [Test]
         public void struct_custom()
         {
-            DateTime obj = DateTime.Now;
+            //https://github.com/dotnet/runtime/issues/1955
+            //https://github.com/dotnet/runtime/issues/10057
+            var obj = new CustomStruct()
+            {
+                X =1,
+                Y=2,
+            };
             Console.WriteLine(obj);
             byte[]? bytes = obj.ToBytes();
-            DateTime obj2 = bytes.FromBytes<DateTime>();
+            var obj2 = bytes.FromBytes<CustomStruct>();
             Console.WriteLine(obj2);
             Assert.AreEqual(obj, obj2);
-            Assert.Fail();
+           
         }
 
 
@@ -348,6 +354,15 @@ namespace ToBytes.Tests
                 4,
                 5
             };
+            byte[]? bytes = obj.ToBytes();
+            List<int>? obj2 = bytes.FromBytes<List<int>>();
+            Assert.AreEqual(obj, obj2);
+        }
+        
+        [Test]
+        public void struct_list_int_null()
+        {
+            List<int> obj = null;
             byte[]? bytes = obj.ToBytes();
             List<int>? obj2 = bytes.FromBytes<List<int>>();
             Assert.AreEqual(obj, obj2);

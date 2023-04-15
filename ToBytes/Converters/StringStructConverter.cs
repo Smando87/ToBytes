@@ -8,7 +8,7 @@ namespace ToBytes.Converters
         public int Size => 0;
         public ValueType Type => ValueType.String;
 
-        public byte[] ToBytes(object obj, byte[] prefix)
+        public byte[] ToBytes(object obj)
         {
             byte[]? bts = ((string)obj).ToBytesUnsafe();
             return bts;

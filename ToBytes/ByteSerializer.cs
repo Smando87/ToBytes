@@ -8,40 +8,43 @@ using System.Runtime.CompilerServices;
 using ToBytes.Cache;
 using ToBytes.Converters;
 using ToBytes.Extensions;
+using Enum = System.Enum;
 
 namespace ToBytes
 {
     internal class ByteSerializer
     {
         public static int Version => 1;
-        private static byte[] ArrayOfObjectToBytes(object obj, Type type, Type elType, byte[] prefix)
+
+        private static byte[] ArrayOfObjectToBytes(IList array, Type type, Type? elType)
         {
-            Array array = (Array)obj;
             List<byte>? bytes = new List<byte>();
-            foreach (var el in array)
+            for (int i = 0; i < array.Count; i++)
             {
-                bytes.AddRange(ToBytes(el));
+                bytes.AddRange(ToBytes(array[i]));
             }
 
             return bytes.ToArray();
         }
 
-        private static byte[] ArrayOfStructToBytes<T>(T obj, Type type, Type elType, byte[] prefix)
+        private static byte[] ArrayOfStructToBytes<T>(T obj, Type type, Type? elType)
         {
-            IStructConverter? conv = CacherSingleton.Instance.GetConverter(typeof(Array));
-            return conv.ToBytes(obj, prefix);
+            IStructConverter? conv = CacherSingleton.Instance.GetConverter(typeof(Array), Version);
+            return conv.ToBytes(obj);
         }
 
-        private static byte[] DictionaryToBytes(object obj, Type type, Type keyType, Type valType, byte[] prefix)
+        private static byte[] DictionaryToBytes(object obj, Type type, Type keyType, Type valType)
         {
             List<byte>? bytes = new List<byte>();
             IDictionary? dict = (IDictionary)obj;
+            IStructConverter? listConverter = CacherSingleton.Instance.GetConverter(typeof(IList), Version);
             //dict.Keys.GetType()
-            Type? keysArrType = dict.Keys.GetType().GetGenericArguments()[1];
+            Type? keysArrType = dict.Keys.GetType().GetGenericArguments()[0];
             int[]? indices = new int[1]
             {
                 dict.Keys.Count
             };
+
             Array? keysArrInstance = Array.CreateInstance(keysArrType, indices);
             Array? keysArr = (Array)keysArrInstance;
             dict.Keys.CopyTo(keysArr, 0);
@@ -49,7 +52,8 @@ namespace ToBytes
             if (keyType.IsStruct())
             {
                 bytes.AddRange(ConvertExtensions.ToBytes((int)ValueType.Struct));
-                byte[]? keysBytesTemp = ToBytes(keysArr);
+
+                byte[]? keysBytesTemp = listConverter.ToBytes(keysArr);
                 bytes.AddRange(ConvertExtensions.ToBytes(keysBytesTemp.Length));
                 bytes.AddRange(keysBytesTemp);
             }
@@ -63,8 +67,10 @@ namespace ToBytes
                     {
                         el
                     })!;
-                    bytes.AddRange(ConvertExtensions.ToBytes(bytesToAdd.Length));
-                    bytes.AddRange(bytesToAdd);
+                    var noPrefix = new byte[bytesToAdd.Length - 2];
+                    Buffer.BlockCopy(bytesToAdd, 2, noPrefix, 0, bytesToAdd.Length - 2);
+                    bytes.AddRange(ConvertExtensions.ToBytes(noPrefix.Length));
+                    bytes.AddRange(noPrefix);
                 }
             }
 
@@ -76,7 +82,7 @@ namespace ToBytes
             if (valType.IsStruct())
             {
                 bytes.AddRange(ConvertExtensions.ToBytes((int)ValueType.Struct));
-                byte[]? valsBytesTemp = ToBytes(valsArr);
+                byte[]? valsBytesTemp = listConverter.ToBytes(valsArr);
                 bytes.AddRange(ConvertExtensions.ToBytes(valsBytesTemp.Length));
                 bytes.AddRange(valsBytesTemp);
             }
@@ -90,17 +96,18 @@ namespace ToBytes
                     {
                         el
                     })!;
-                    bytes.AddRange(ConvertExtensions.ToBytes(bytesToAdd.Length));
-                    bytes.AddRange(bytesToAdd);
+                    var noPrefix = new byte[bytesToAdd.Length - 2];
+                    Buffer.BlockCopy(bytesToAdd, 2, noPrefix, 0, bytesToAdd.Length - 2);
+                    bytes.AddRange(ConvertExtensions.ToBytes(noPrefix.Length));
+                    bytes.AddRange(noPrefix);
                 }
             }
 
             return bytes.ToArray();
         }
 
-        private static byte[] ListOfObjectToBytes(object obj, Type type, Type elType, byte[] prefix)
+        private static byte[] ListOfObjectToBytes(IList array, Type type, Type? elType)
         {
-            IList? array = (IList)obj;
             List<byte>? bytes = new List<byte>();
             bytes.AddRange(ConvertExtensions.ToBytes(array.Count));
             foreach (var el in array)
@@ -117,13 +124,13 @@ namespace ToBytes
             return bytes.ToArray();
         }
 
-        private static byte[] ListOfStructToBytes<T>(T obj, Type type, Type elType, byte[] prefix)
+        private static byte[] ListOfStructToBytes<T>(T obj, Type type, Type? elType)
         {
-            IStructConverter? conv = CacherSingleton.Instance.GetConverter(typeof(IList));
-            return conv.ToBytes(obj, prefix);
+            IStructConverter? conv = CacherSingleton.Instance.GetConverter(typeof(IList), Version);
+            return conv.ToBytes(obj);
         }
 
-        public static SerializeMetadata ObjectToBytes<T>( T obj, byte[] prefix)
+        public static SerializeMetadata ObjectToBytes<T>(T obj)
         {
             if (obj == null)
             {
@@ -166,11 +173,11 @@ namespace ToBytes
                 }
 
                 Type? valType = val.GetType();
-                IStructConverter? conv = CacherSingleton.Instance.GetConverter(prop.PropertyType);
+                IStructConverter? conv = CacherSingleton.Instance.GetConverter(prop.PropertyType, Version);
 
                 if (conv != null)
                 {
-                    byte[]? bytes = conv.ToBytes(val,prefix);
+                    byte[]? bytes = conv.ToBytes(val);
                     resData.AddRange(bytes);
                     valueTypes[index] = (byte)conv.Type;
                     if (valueTypes[index] == 2)
@@ -231,78 +238,101 @@ namespace ToBytes
             return result;
         }
 
-        private static byte[] StringToBytes<T>(T obj, Type type, byte[] prefix)
+        private static byte[] StringToBytes<T>(T obj, Type type)
         {
-            IStructConverter? conv = CacherSingleton.Instance.GetConverter(type);
-            return conv.ToBytes(obj,prefix);
+            IStructConverter? conv = CacherSingleton.Instance.GetConverter(type, Version);
+            return conv.ToBytes(obj);
         }
 
-        private static byte[] StructToBytes<T>(T obj, Type type, byte[] prefix)
+        private static byte[] StructToBytes<T>(T obj, Type type)
         {
-            IStructConverter? conv = CacherSingleton.Instance.GetConverter(type);
-            return conv.ToBytes(obj, prefix);
+            IStructConverter? conv = CacherSingleton.Instance.GetConverter(type, Version);
+            return conv.ToBytes(obj);
+        }
+        
+        private static byte[] CustomStructToBytes<T>(T obj)
+        {
+            IStructConverter? conv = CacherSingleton.Instance.GetConverter(typeof(CustomStructConverter), Version);
+            return conv.ToBytes(obj);
         }
 
-        public static byte[] ToBytes<T>(T obj)
+        private static byte[] EnumToBytes<T>(T obj)
+        {
+            IStructConverter? conv = CacherSingleton.Instance.GetConverter(typeof(Enum), Version);
+            return conv.ToBytes(obj);
+        }
+
+        public static byte[]? ToBytes<T>(T obj)
         {
             CacherSingleton.Instance.Init();
 
-            byte[] prefix = new byte[2]
+            List<byte> bytesWithPrefix = new List<byte>
             {
-                (byte)ByteSerializer.Version, (byte)SerializedType.Standard
+                (byte)ByteSerializer.Version,
+                (byte)SerializedType.Standard
             };
             if (obj == null)
             {
                 return null;
             }
 
-            Type? type = obj?.GetType();
+            Type type = obj.GetType();
 
             ValueType valueType = CacherSingleton.Instance.GetValueTypeFromType(type);
-            Type elType = null;
+            Type? elType = null;
+            byte[] res = new byte[]
+            {
+            };
             switch (valueType)
             {
                 case ValueType.Struct:
-                    return StructToBytes(obj, type, prefix);
-                case ValueType.Null:
+                    res = StructToBytes(obj, type);
+                    break;
+                case ValueType.CustomStruct:
+                    res = CustomStructToBytes(obj);
                     break;
                 case ValueType.String:
-                    return StringToBytes(obj, type, prefix);
+                    res = StringToBytes(obj, type);
                     break;
                 case ValueType.Object:
-                    return ObjectToBytes(obj,  prefix).Data;
+                    res = ObjectToBytes(obj).Data;
                     break;
                 case ValueType.ArrayOfStruct:
                     elType = type.GetElementType();
-                    return ArrayOfStructToBytes(obj, type, elType, prefix);
+                    res = ArrayOfStructToBytes(obj, type, elType);
                     break;
                 case ValueType.ArrayOfObject:
                     elType = type.GetElementType();
-                    return ArrayOfObjectToBytes(obj, type, elType, prefix);
+                    res = ArrayOfObjectToBytes((IList)obj, type, elType);
                     break;
                 case ValueType.ListOfStruct:
                     Type? listElType = ((IList)obj).GetListTypeFromObj();
-                    return ListOfStructToBytes(obj, type, listElType, prefix);
+                    res = ListOfStructToBytes(obj, type, listElType);
                     break;
                 case ValueType.ListOfObject:
                     elType = ((IList)obj).GetListTypeFromObj();
-                    return ListOfObjectToBytes(obj, type, elType, prefix);
-                    break;
-                case ValueType.Unknown:
+                    res = ListOfObjectToBytes((IList)obj, type, elType);
                     break;
                 case ValueType.Dictionary:
                     Type[]? arguments = type.GetGenericArguments();
                     Type keyType = arguments[0];
                     Type valType = arguments[1];
-                    return DictionaryToBytes(obj, type, keyType, valType, prefix);
+                    res = DictionaryToBytes(obj, type, keyType, valType);
                     break;
                 case ValueType.Enum:
+                    res = EnumToBytes(obj);
+                    break;
+                case ValueType.Unknown:
+                    break;
+                case ValueType.Null:
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
 
-            return null;
+            bytesWithPrefix.AddRange(res);
+            var res2 = bytesWithPrefix.ToArray();
+            return res2;
         }
     }
 }

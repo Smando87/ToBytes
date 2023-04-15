@@ -15,10 +15,15 @@ namespace ToBytes.Converters
         public int Size => 0;
         public ValueType Type => ValueType.ArrayOfStruct;
 
-        public byte[] ToBytes(object obj, byte[] prefix)
+        public byte[] ToBytes(object obj)
         {
             IList? list = (IList)obj;
             Type? elType = list.GetType().GetElementType();
+            if (elType == null)
+            {
+                elType = list[0].GetType();
+            }
+
             Array array = Array.CreateInstance(elType, list.Count);
             list.CopyTo(array, 0);
 

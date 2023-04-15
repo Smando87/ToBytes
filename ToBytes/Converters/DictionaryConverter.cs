@@ -10,10 +10,10 @@ namespace ToBytes.Converters
     public class DictionaryConverter : ISpecialConverter
     {
         public new int Version => 1;
-        public object FromBytes(byte[] bytes, Type keyType, Type valType)
+        public object FromBytes(byte[] bytes, Type keyType, Type valType, int version)
         {
-            IStructConverter? convArray = CacherSingleton.Instance.GetConverter(typeof(Array));
-            IStructConverter? convList = CacherSingleton.Instance.GetConverter(typeof(IList));
+            IStructConverter? convArray = CacherSingleton.Instance.GetConverter(typeof(Array),version);
+            IStructConverter? convList = CacherSingleton.Instance.GetConverter(typeof(IList), version);
             List<byte>? byteList = bytes.ToList();
             int i = 0;
             Array arrOfKeys;

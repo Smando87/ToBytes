@@ -13,6 +13,6 @@ namespace ToBytes.Converters
         (object, int) FromBytes(byte[] bytes);
         (object, int) FromBytes(byte[] bytes, Type destType);
 
-        byte[] ToBytes(object obj, byte[] prefix);
+        byte[] ToBytes(object obj);
     }
 }

@@ -9,23 +9,24 @@ namespace ToBytes.Cache
 {
     internal class Cacher
     {
-        public readonly Dictionary<Type, MethodInfo> MetochdCache = new();
+        public readonly Dictionary<Type?, MethodInfo> MetochdCache = new();
         public readonly Dictionary<Type, PropertyDescriptor[]> PropertyCache = new();
         public readonly Dictionary<Type, ValueType> ValueTypeCache = new();
         private readonly object _lockConverters = new();
-        public Dictionary<Type, object> Converters;
+        public Dictionary<Type, List<IStructConverter>> Converters;
 
         internal Cacher()
         {
             Init();
         }
 
-        internal IStructConverter GetConverter(Type propPropertyType)
+        internal IStructConverter GetConverter(Type propPropertyType, int version)
         {
-            object res = null;
+            List<IStructConverter> res = null;
             if (CacherSingleton.Instance.Converters.TryGetValue(propPropertyType, out res))
             {
-                return (IStructConverter)res;
+                return (IStructConverter)res.Where(ff => ff.Version <= version).OrderByDescending(ff => ff.Version)
+                    .FirstOrDefault();
             }
 
             return null;
@@ -45,7 +46,7 @@ namespace ToBytes.Cache
             return props;
         }
 
-        internal MethodInfo GetToBytesMethodCached(Type valType)
+        internal MethodInfo GetToBytesMethodCached(Type? valType)
         {
             MethodInfo method = null;
             if (!CacherSingleton.Instance.MetochdCache.TryGetValue(valType, out method))
@@ -63,6 +64,13 @@ namespace ToBytes.Cache
             ValueType valueType = ValueType.Unknown;
             if (!CacherSingleton.Instance.ValueTypeCache.TryGetValue(type, out valueType))
             {
+                if (type.IsCustomStruct())
+                {
+                    valueType = ValueType.CustomStruct;
+                    CacherSingleton.Instance.ValueTypeCache.Add(type, valueType);
+                    return valueType;
+                }
+
                 if (type.IsStruct())
                 {
                     valueType = ValueType.Struct;
@@ -122,113 +130,230 @@ namespace ToBytes.Cache
             {
                 lock (_lockConverters)
                 {
-                    Converters = new Dictionary<Type, object>
+                    Converters = new Dictionary<Type, List<IStructConverter>>
                     {
                         {
-                            typeof(int), new IntStructConverter()
+                            typeof(int), new List<IStructConverter>()
+                            {
+                                new IntStructConverter()
+                            }
                         },
                         {
-                            typeof(int?), new IntStructConverter()
+                            typeof(int?), new List<IStructConverter>()
+                            {
+                                new IntStructConverter()
+                            }
                         },
                         {
-                            typeof(long), new LongStructConverter()
+                            typeof(long), new List<IStructConverter>()
+                            {
+                                new LongStructConverter()
+                            }
                         },
                         {
-                            typeof(long?), new LongStructConverter()
+                            typeof(long?), new List<IStructConverter>()
+                            {
+                                new LongStructConverter()
+                            }
                         },
                         {
-                            typeof(double), new DoubleStructConverter()
+                            typeof(double), new List<IStructConverter>()
+                            {
+                                new DoubleStructConverter()
+                            }
                         },
                         {
-                            typeof(double?), new DoubleStructConverter()
+                            typeof(double?), new List<IStructConverter>()
+                            {
+                                new DoubleStructConverter()
+                            }
                         },
                         {
-                            typeof(bool), new BoolStructConverter()
+                            typeof(bool), new List<IStructConverter>()
+                            {
+                                new BoolStructConverter()
+                            }
                         },
                         {
-                            typeof(bool?), new BoolStructConverter()
+                            typeof(bool?), new List<IStructConverter>()
+                            {
+                                new BoolStructConverter()
+                            }
                         },
                         {
-                            typeof(string), new StringStructConverter()
+                            typeof(string), new List<IStructConverter>()
+                            {
+                                new StringStructConverter()
+                            }
                         },
                         {
-                            typeof(DateTime), new DateTimeStructConverter()
+                            typeof(DateTime), new List<IStructConverter>()
+                            {
+                                new DateTimeStructConverter()
+                            }
                         },
                         {
-                            typeof(DateTime?), new DateTimeStructConverter()
+                            typeof(DateTime?), new List<IStructConverter>()
+                            {
+                                new DateTimeStructConverter()
+                            }
                         },
-                        // {typeof(byte[]), new ByteArrayConverter()},
+                        // {typeof(byte[]), new ByteArrayConverter()}},
                         {
-                            typeof(byte), new ByteStructConverter()
-                        },
-                        {
-                            typeof(byte?), new ByteStructConverter()
-                        },
-                        {
-                            typeof(sbyte), new SByteStructConverter()
-                        },
-                        {
-                            typeof(sbyte?), new SByteStructConverter()
+                            typeof(byte), new List<IStructConverter>()
+                            {
+                                new ByteStructConverter()
+                            }
                         },
                         {
-                            typeof(short), new ShortStructConverter()
+                            typeof(byte?), new List<IStructConverter>()
+                            {
+                                new ByteStructConverter()
+                            }
                         },
                         {
-                            typeof(short?), new ShortStructConverter()
+                            typeof(sbyte), new List<IStructConverter>()
+                            {
+                                new SByteStructConverter()
+                            }
                         },
                         {
-                            typeof(ushort), new UShortStructConverter()
+                            typeof(sbyte?), new List<IStructConverter>()
+                            {
+                                new SByteStructConverter()
+                            }
                         },
                         {
-                            typeof(ushort?), new UShortStructConverter()
+                            typeof(short), new List<IStructConverter>()
+                            {
+                                new ShortStructConverter()
+                            }
                         },
                         {
-                            typeof(uint), new UIntStructConverter()
+                            typeof(short?), new List<IStructConverter>()
+                            {
+                                new ShortStructConverter()
+                            }
                         },
                         {
-                            typeof(uint?), new UIntStructConverter()
+                            typeof(ushort), new List<IStructConverter>()
+                            {
+                                new UShortStructConverter()
+                            }
                         },
                         {
-                            typeof(ulong), new ULongStructConverter()
+                            typeof(ushort?), new List<IStructConverter>()
+                            {
+                                new UShortStructConverter()
+                            }
                         },
                         {
-                            typeof(ulong?), new ULongStructConverter()
+                            typeof(uint), new List<IStructConverter>()
+                            {
+                                new UIntStructConverter()
+                            }
                         },
                         {
-                            typeof(float), new FloatStructConverter()
+                            typeof(uint?), new List<IStructConverter>()
+                            {
+                                new UIntStructConverter()
+                            }
                         },
                         {
-                            typeof(float?), new FloatStructConverter()
+                            typeof(ulong), new List<IStructConverter>()
+                            {
+                                new ULongStructConverter()
+                            }
                         },
                         {
-                            typeof(decimal), new DecimalStructConverter()
+                            typeof(ulong?), new List<IStructConverter>()
+                            {
+                                new ULongStructConverter()
+                            }
                         },
                         {
-                            typeof(decimal?), new DecimalStructConverter()
+                            typeof(float), new List<IStructConverter>()
+                            {
+                                new FloatStructConverter()
+                            }
                         },
                         {
-                            typeof(TimeSpan), new TimeSpanStructConverter()
+                            typeof(float?), new List<IStructConverter>()
+                            {
+                                new FloatStructConverter()
+                            }
                         },
                         {
-                            typeof(TimeSpan?), new TimeSpanStructConverter()
+                            typeof(decimal), new List<IStructConverter>()
+                            {
+                                new DecimalStructConverter()
+                            }
                         },
                         {
-                            typeof(Guid), new GuidStructConverter()
+                            typeof(decimal?), new List<IStructConverter>()
+                            {
+                                new DecimalStructConverter()
+                            }
                         },
                         {
-                            typeof(Guid?), new GuidStructConverter()
+                            typeof(TimeSpan), new List<IStructConverter>()
+                            {
+                                new TimeSpanStructConverter()
+                            }
                         },
                         {
-                            typeof(char), new CharStructConverter()
+                            typeof(TimeSpan?), new List<IStructConverter>()
+                            {
+                                new TimeSpanStructConverter()
+                            }
                         },
                         {
-                            typeof(char?), new CharStructConverter()
+                            typeof(Guid), new List<IStructConverter>()
+                            {
+                                new GuidStructConverter()
+                            }
                         },
                         {
-                            typeof(Array), new ArrayStructConverter()
+                            typeof(Guid?), new List<IStructConverter>()
+                            {
+                                new GuidStructConverter()
+                            }
                         },
                         {
-                            typeof(IList), new ListStructConverter()
+                            typeof(char), new List<IStructConverter>()
+                            {
+                                new CharStructConverter()
+                            }
+                        },
+                        {
+                            typeof(char?), new List<IStructConverter>()
+                            {
+                                new CharStructConverter()
+                            }
+                        },
+                        {
+                            typeof(Array), new List<IStructConverter>()
+                            {
+                                new ArrayStructConverter()
+                            }
+                        },
+                        {
+                            typeof(IList), new List<IStructConverter>()
+                            {
+                                new ListStructConverter()
+                            }
+                        },
+                        {
+                            typeof(Enum), new List<IStructConverter>()
+                            {
+                                new EnumStructConverter()
+                            }
+                        },
+                        {
+                            typeof(CustomStructConverter), new List<IStructConverter>()
+                            {
+                                new CustomStructConverter()
+                            }
                         }
 
                         //{typeof(byte), new ByteConverter()},

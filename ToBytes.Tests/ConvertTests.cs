@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using ObjectSerializer;
 using System;
 
 namespace ToBytes.Tests
@@ -343,5 +344,75 @@ namespace ToBytes.Tests
             ushort? val2 = bytes.ToUShortNullable();
             Assert.AreEqual(val, val2);
         }
+        
+        [Test]
+        public void enum_int_to_bytes()
+        {
+            var val = TestEnumInt.First;
+            byte[]? bytes = val.ToBytes();
+            TestEnumInt val2 = bytes.FromBytes<TestEnumInt>();
+            Assert.AreEqual(val, val2);
+        }
+        
+
+        [Test]
+        public void enum_long_to_bytes()
+        {
+            var val = TestEnumLong.First;
+            byte[]? bytes = val.ToBytes();
+            TestEnumLong val2 = bytes.FromBytes<TestEnumLong>();
+            Assert.AreEqual(val, val2);
+        }
+    
+        [Test]
+        public void enum_byte_to_bytes()
+        {
+            var val = TestEnumByte.First;
+            byte[]? bytes = val.ToBytes();
+            TestEnumByte val2 = bytes.FromBytes<TestEnumByte>();
+            Assert.AreEqual(val, val2);
+        }
+        
+        [Test]
+        public void enum_short_to_bytes()
+        {
+            var val = TestEnumShort.First;
+            byte[]? bytes = val.ToBytes();
+            TestEnumShort val2 = bytes.FromBytes<TestEnumShort>();
+            Assert.AreEqual(val, val2);
+        }
+        
+        [Test]
+        public void enum_sbyte_to_bytes()
+        {
+            var val = TestEnumSByte.First;
+            byte[]? bytes = val.ToBytes();
+            TestEnumSByte val2 = bytes.FromBytes<TestEnumSByte>();
+            Assert.AreEqual(val, val2);
+        }
+     
+        
+        [Test]
+        public void enum_ulong_to_bytes()
+        {
+            var val = TestEnumULong.First;
+            byte[]? bytes = val.ToBytes();
+            TestEnumULong val2 = bytes.FromBytes<TestEnumULong>();
+            Assert.AreEqual(val, val2);
+        }
+        
+        [Test]
+        
+        public void enum_ushort_to_bytes()
+        {
+            var val = TestEnumUShort.First;
+            byte[]? bytes = val.ToBytes();
+            TestEnumUShort val2 = bytes.FromBytes<TestEnumUShort>();
+            Assert.AreEqual(val, val2);
+        }
+        
+       
+      
+        
     }
 }

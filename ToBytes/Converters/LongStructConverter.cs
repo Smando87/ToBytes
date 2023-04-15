@@ -8,7 +8,7 @@ namespace ToBytes.Converters
         public int Size => sizeof(long);
         public ValueType Type => ValueType.Struct;
 
-        public byte[] ToBytes(object obj, byte[] prefix)
+        public byte[] ToBytes(object obj)
         {
             byte[]? bts = ConvertExtensions.ToBytes((long)obj);
             return bts;
