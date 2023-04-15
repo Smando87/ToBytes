@@ -334,5 +334,24 @@ namespace ToBytes
             var res2 = bytesWithPrefix.ToArray();
             return res2;
         }
+
+        public static void WriteToFile<T>(T obj, string path)
+        {
+            var bytes = ToBytes(obj);
+            File.WriteAllBytes(path, bytes);
+        }
+
+        public static byte[]? ToBytesEncrypted<T>(T obj, string password)
+        {
+            var bytes = ToBytes(obj);
+            return CryptoExtensions.Encrypt(bytes, password);
+        }
+
+
+        public static void WriteEncryptedToFile<T>(T obj, string path, string password)
+        {
+            var bytes = ToBytesEncrypted(obj, password);
+            File.WriteAllBytes(path, bytes);
+        }
     }
 }

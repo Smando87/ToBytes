@@ -2,7 +2,9 @@ using NUnit.Framework;
 using ObjectSerializer;
 using System;
 using System.Collections.Generic;
+using System.Text;
 using ToBytes.Cache;
+using ToBytes.Extensions;
 
 namespace ToBytes.Tests
 {
@@ -252,15 +254,14 @@ namespace ToBytes.Tests
             //https://github.com/dotnet/runtime/issues/10057
             var obj = new CustomStruct()
             {
-                X =1,
-                Y=2,
+                X = 1,
+                Y = 2,
             };
             Console.WriteLine(obj);
             byte[]? bytes = obj.ToBytes();
             var obj2 = bytes.FromBytes<CustomStruct>();
             Console.WriteLine(obj2);
             Assert.AreEqual(obj, obj2);
-           
         }
 
 
@@ -358,7 +359,7 @@ namespace ToBytes.Tests
             List<int>? obj2 = bytes.FromBytes<List<int>>();
             Assert.AreEqual(obj, obj2);
         }
-        
+
         [Test]
         public void struct_list_int_null()
         {
@@ -550,6 +551,43 @@ namespace ToBytes.Tests
             Assert.AreEqual(val2, 1);
             Assert.AreEqual(val, 10);
             Assert.Pass();
+        }
+
+        [Test]
+        public void encrypt_decrypt()
+        {
+            string obj = "string";
+            byte[]? bytes = obj.ToBytesEncrypted("password");
+            string? obj2 = bytes.FromEncryptedBytes<string>("password");
+            Assert.AreEqual(obj, obj2);
+        }
+
+        [Test]
+        public void crypto()
+        {
+            string obj = "string";
+            byte[]? bytes = CryptoExtensions.Encrypt(Encoding.UTF8.GetBytes(obj), "password");
+            var bytes2 = CryptoExtensions.Decrypt(bytes, "password");
+            var obj2 = Encoding.UTF8.GetString(bytes2);
+            Assert.AreEqual(obj, obj2);
+        }
+        
+        [Test]
+        public void to_file()
+        {
+            string obj = "string";
+            obj.ToBytesToFile("test.txt");
+            string? obj2 = ToByteExtensions.FromBytesFromFile<string>("test.txt");
+            Assert.AreEqual(obj, obj2);
+        }
+        
+        [Test]
+        public void to_file_encrypted()
+        {
+            string obj = "string";
+            obj.ToEncryptedBytesToFile("test.txt", "password");
+            string? obj2 = ToByteExtensions.FromEncryptedBytesFromFile<string>("test.txt", "password");
+            Assert.AreEqual(obj, obj2);
         }
     }
 }

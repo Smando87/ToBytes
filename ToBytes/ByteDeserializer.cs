@@ -337,5 +337,23 @@ namespace ToBytes
 
             return obj;
         }
+
+        public static T FromFile<T>(string path)
+        {
+            byte[]? bytes = File.ReadAllBytes(path);
+            return (T)FromBytes(bytes, typeof(T));
+        }
+
+        public static T FromEncryptedBytes<T>(byte[] bytes, string password)
+        {
+            var bytesDecrypted = CryptoExtensions.Decrypt(bytes, password);
+            return (T)FromBytes(bytesDecrypted, typeof(T));
+        }
+
+        public static T FromEncryptedFile<T>(string path, string password)
+        {
+            byte[]? bytes = File.ReadAllBytes(path);
+            return FromEncryptedBytes<T>(bytes, password);
+        }
     }
 }
