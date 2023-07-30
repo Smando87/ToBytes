@@ -1,0 +1,1 @@
+dotnet nuget push .\Package\*.nupkg --api-key %NUGETKEY% --source  https://api.nuget.org/v3/index.json
