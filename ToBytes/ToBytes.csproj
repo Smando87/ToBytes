@@ -6,7 +6,7 @@
         <Authors>Simone Del Prete</Authors>
         <Company>Simone Del Prete</Company>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <TargetFramework>net7.0</TargetFramework>
+        <TargetFramework>netstandard2.1</TargetFramework>
     </PropertyGroup>
     <PropertyGroup>
         <ImplicitUsings>enable</ImplicitUsings>
