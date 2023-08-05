@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <PackageId>ToBytes</PackageId>
-        <Version>0.0.1</Version>
+        <Version>0.0.2</Version>
         <Authors>Simone Del Prete</Authors>
         <Company>Simone Del Prete</Company>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
