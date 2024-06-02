@@ -1,6 +1,6 @@
-# ByteSerializer
+# ToBytes
 
-ByteSerializer is a C# library for serializing various types of objects into byte arrays. It supports handling different data types such as arrays, dictionaries, lists, structs, enums, and strings. The library includes features for encryption and writing serialized data to files.
+ToBytes is a C# library for serializing various types of objects into byte arrays. It supports handling different data types such as arrays, dictionaries, lists, structs, enums, and strings. The library includes features for encryption and writing serialized data to files.
 
 ## Features
 
