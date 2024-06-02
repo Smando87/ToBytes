@@ -4,11 +4,10 @@ ByteSerializer is a C# library for serializing various types of objects into byt
 
 ## Features
 
-- Serialize and deserialize objects to and from byte arrays.
-- Support for arrays, dictionaries, lists, structs, enums, and strings.
-- Encryption of serialized data.
-- Caching of converters and methods for optimized performance.
-- Writing serialized data to files.
+- **Serialize and Deserialize Objects:** Convert objects to byte arrays and vice versa.
+- **Encryption Support:** Encrypt and decrypt byte arrays for secure storage.
+- **File Operations:** Save serialized objects to files and load them back.
+- **Extension Methods:** Utilize convenient extension methods for clean and readable code.
 
 ## Installation
 
@@ -26,52 +25,132 @@ Install-Package ToBytes
 
 ## Usage
 
-### Serialize and Deserialize an Object to a Byte Array
+### Serialization
+
+Convert an object to a byte array:
 
 ```csharp
 using ToBytes;
 
 var myObject = new MyClass();
-byte[] serializedData = myObject.ToBytes(myObject);
-
-var deserializedObject =serializedData.FromBytes<MyClass>()
+byte[] byteArray = myObject.ToBytes();
 ```
 
-### Write Serialized Data to a File
+### Deserialization
+
+Convert a byte array back to an object:
 
 ```csharp
 using ToBytes;
 
-var myObject = new MyClass();
-myObject.ToBytesToFile("path/to/file");
+MyClass myObject = byteArray.FromBytes<MyClass>();
 ```
 
-### Encrypt and Write Serialized Data to a File
+### Encryption
+
+Encrypt an object and convert it to a byte array:
 
 ```csharp
 using ToBytes;
 
-var myObject = new MyClass();
-string password = "securePassword";
-ByteSerializer.WriteEncryptedToFile(myObject, "path/to/file", password);
+string password = "securepassword";
+byte[] encryptedByteArray = myObject.ToBytesEncrypted(password);
 ```
 
-## Custom Serialization
-
-ByteSerializer supports custom struct converters for specific serialization requirements. Implement the `IStructConverter` interface to create custom converters.
+Decrypt a byte array and convert it back to an object:
 
 ```csharp
-public class CustomStructConverter : IStructConverter
+using ToBytes;
+
+MyClass decryptedObject = encryptedByteArray.FromEncryptedBytes<MyClass>(password);
+```
+
+### File Operations
+
+Save an object to a file:
+
+```csharp
+using ToBytes;
+
+string filePath = "path/to/file.bin";
+myObject.ToBytesToFile(filePath);
+```
+
+Load an object from a file:
+
+```csharp
+using ToBytes;
+
+MyClass myObject = ToBytesExtensions.FromBytesFromFile<MyClass>(filePath);
+```
+
+Save an encrypted object to a file:
+
+```csharp
+using ToBytes;
+
+string filePath = "path/to/encryptedFile.bin";
+string password = "securepassword";
+myObject.ToEncryptedBytesToFile(filePath, password);
+```
+
+Load an encrypted object from a file:
+
+```csharp
+using ToBytes;
+
+MyClass myObject = ToBytesExtensions.FromEncryptedBytesFromFile<MyClass>(filePath, password);
+```
+
+## Example
+
+Here's a complete example demonstrating serialization, encryption, and file operations:
+
+```csharp
+using System;
+using ToBytes;
+
+public class MyClass
 {
-    public byte[] ToBytes(object obj)
-    {
-        // Implement custom serialization logic
-    }
+    public int Id { get; set; }
+    public string Name { get; set; }
+}
 
-    public int Type => (int)ValueType.CustomStruct;
+public class Program
+{
+    public static void Main()
+    {
+        var myObject = new MyClass { Id = 1, Name = "Test" };
+
+        // Serialize to byte array
+        byte[] byteArray = myObject.ToBytes();
+
+        // Deserialize from byte array
+        MyClass deserializedObject = byteArray.FromBytes<MyClass>();
+
+        // Encrypt and serialize to byte array
+        string password = "securepassword";
+        byte[] encryptedByteArray = myObject.ToBytesEncrypted(password);
+
+        // Decrypt and deserialize from byte array
+        MyClass decryptedObject = encryptedByteArray.FromEncryptedBytes<MyClass>(password);
+
+        // Save to file
+        string filePath = "path/to/file.bin";
+        myObject.ToBytesToFile(filePath);
+
+        // Load from file
+        MyClass fileObject = ToBytesExtensions.FromBytesFromFile<MyClass>(filePath);
+
+        // Save encrypted to file
+        string encryptedFilePath = "path/to/encryptedFile.bin";
+        myObject.ToEncryptedBytesToFile(encryptedFilePath, password);
+
+        // Load encrypted from file
+        MyClass encryptedFileObject = ToBytesExtensions.FromEncryptedBytesFromFile<MyClass>(encryptedFilePath, password);
+    }
 }
 ```
-
 ## Contributing
 
 Contributions are welcome! Please open an issue or submit a pull request.
