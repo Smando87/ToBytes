@@ -15,13 +15,13 @@ ByteSerializer is a C# library for serializing various types of objects into byt
 To include ByteSerializer in your project, add the following line to your `.csproj` file:
 
 ```xml
-<PackageReference Include="ByteSerializer" Version="1.0.0" />
+<PackageReference Include="ToBytes" Version="1.0.0" />
 ```
 
 Or install via NuGet Package Manager:
 
 ```sh
-Install-Package ByteSerializer
+Install-Package ToBytes
 ```
 
 ## Usage
