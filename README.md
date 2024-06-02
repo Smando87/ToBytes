@@ -43,7 +43,7 @@ var deserializedObject =serializedData.FromBytes<MyClass>()
 using ToBytes;
 
 var myObject = new MyClass();
-ByteSerializer.WriteToFile(myObject, "path/to/file");
+myObject.ToBytesToFile("path/to/file");
 ```
 
 ### Encrypt and Write Serialized Data to a File
